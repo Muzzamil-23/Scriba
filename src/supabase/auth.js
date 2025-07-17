@@ -31,6 +31,20 @@ export class AuthService {
         }
     }
 
+    async loginWithGoogle() {
+        try {
+            let {data, error} = await this.client.auth.signInWithOAuth({
+                provider: 'google'
+            })
+            if(data) return data
+            else if(error) throw error
+            
+        } catch (error) {
+            console.log("AuthService :: loginWithGoogle :: error", error);
+            throw error
+        }
+    }
+
     async getCurrentUser() {
         try {
             const { data: { user } } = await this.client.auth.getUser()
