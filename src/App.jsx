@@ -1,9 +1,19 @@
+
+import Header from "./components/Header/Header"
+import LogoutBtn from "./components/LogoutBtn"
+import SearchBar from "./components/SearchBar"
+import Home from "./pages/Home"
+
 function App() {
   
 
   return (
     <>
-      <h1 className="text-4xl text-blue-500 font-bold">Test</h1>
+    {/* <Header/> */}
+    {/* <Home/> */}
+    <LogoutBtn/>
+    
+      {/* <SearchBar/> */}
     </>
   )
 }
