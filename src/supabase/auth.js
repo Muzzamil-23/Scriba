@@ -9,8 +9,10 @@ export class AuthService {
     async createAccount({ email, password }) {
         try {
             let { data, error } = await this.client.auth.signUp({ email, password })
-            if (data) {
-                return this.client.auth.login({ email, password })
+            console.log(typeof(email), typeof(password));
+            
+            if (data?.session) {
+                return data
             } else if (error) {
                 throw error
             } else return data
@@ -47,8 +49,8 @@ export class AuthService {
 
     async getCurrentUser() {
         try {
-            const { data: { user } } = await this.client.auth.getUser()
-            return user
+            const { data: { user }, error } = await this.client.auth.getUser()
+            if(user) return user
         } catch (error) {
             console.log("AuthService :: getCurrentUser :: error", error);
             throw error

@@ -8,9 +8,10 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { signUpSchema } from '@/validations/authSchema'
 import { login } from '@/store/authSlice'
+import Container from './Container'
 
 
-const Login = () => {
+const Signup = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const [error, setError] = useState("")
@@ -29,14 +30,16 @@ const Login = () => {
         try {
             const session = await authService.createAccount(data)
             if (session) {
-                const userData = await authService.getCurrentUser()
-                if (userData) dispatch(login(userData))
-                navigate("/")
+                // const userData = await authService.getCurrentUser()
+                // if (userData) dispatch(login(userData))
+                //     else console.log("problem in getting current User");
+                navigate('/login')
             }
         } catch (error) {
             setError(error.message)
         }
     }
+
     return (
         <div className='w-full flex justify-center items-center'>
             <Container>
@@ -47,7 +50,7 @@ const Login = () => {
                         <p>Join thousands of writers and readers</p>
                     </div>
 
-                    <form onSubmit={handleSubmit(loginHandler)} className='w-xl max-w-2xl p-4 rounded-2xl'>
+                    <form onSubmit={handleSubmit(signupHandler)} className='w-xl max-w-2xl p-4 rounded-2xl'>
                         <h2>Sign Up</h2>
                         <Button>Continue with Google</Button>
                         <div className='flex gap-1'>
@@ -104,4 +107,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default Signup
