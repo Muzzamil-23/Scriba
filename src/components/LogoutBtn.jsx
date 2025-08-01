@@ -2,14 +2,14 @@ import React from 'react'
 import Button from './Button'
 import { useDispatch } from 'react-redux'
 import authService from '@/supabase/auth'
-import { logout } from '@/store/authSlice'
+import { clearUser } from '@/store/authSlice'
 
 const LogoutBtn = () => {
     const dispatch = useDispatch()
     const logoutHandler = async () => {
         try {
             await authService.logout()
-            dispatch(logout())
+            dispatch(clearUser())
         } catch (error) {
             console.log("Logout :: logoutHandler :: error", error);
         }

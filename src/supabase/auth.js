@@ -9,8 +9,6 @@ export class AuthService {
     async createAccount({ email, password }) {
         try {
             let { data, error } = await this.client.auth.signUp({ email, password })
-            console.log(typeof(email), typeof(password));
-            
             if (data?.session) {
                 return data
             } else if (error) {

@@ -8,6 +8,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router'
 import Test from './components/Test'
 import Signup from './components/Signup'
 import Login from './components/Login'
+import ProtectedRoute from './components/ProtectedRoute'
+import Home from './pages/Home'
 
 const router = createBrowserRouter([
   {
@@ -15,12 +17,28 @@ const router = createBrowserRouter([
     element: <App/>,
     children: [
       {
+        path: '/',
+        element: (
+          <ProtectedRoute authentication>
+            <Home/>
+          </ProtectedRoute>
+        )
+      },
+      {
         path: '/signup',
-        element: <Signup/>
+        element: (
+          <ProtectedRoute authentication={false}>
+            <Signup/>
+          </ProtectedRoute>
+        )
       },
       {
         path: '/login',
-        element: <Login/>
+        element: (
+          <ProtectedRoute authentication={false}>
+            <Login/>
+          </ProtectedRoute>
+        )
       },
       {
         path: '/test',

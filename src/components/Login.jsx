@@ -7,15 +7,16 @@ import Logo from './Logo'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { loginSchema } from '@/validations/authSchema'
-import { login } from '@/store/authSlice'
+import { setUser } from '@/store/authSlice'
 import Container from './Container'
-import { Chrome, Lock, Mail } from 'lucide-react'
+import { Chrome, Loader2, Lock, Mail } from 'lucide-react'
 
 
 const Login = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const [error, setError] = useState("")
+    const [loading, setLoading] = useState(false)
 
     const {
         register,
@@ -28,32 +29,35 @@ const Login = () => {
 
     const loginHandler = async (data) => {
         setError("")
+        setLoading(true)
         try {
             const session = await authService.login(data)
             if (session) {
                 const userData = await authService.getCurrentUser()
-                if (userData) dispatch(login({ userData }))
+                if (userData) dispatch(setUser({ userData }))
                 navigate("/test")
             }
         } catch (error) {
             setError(error.message)
+        } finally {
+            setLoading(false)
         }
     }
     return (
-        <div className='w-full flex justify-center items-center h-screen'>
+        <div className='w-full flex justify-center items-center h-screen bg-background'>
             <Container className="flex flex-col items-center">
                 <div className='flex flex-col gap-2 items-center'>
                     <Logo />
                     <h3 className='text-xl'>Sign in to your account to continue</h3>
                 </div>
-                <div className='flex flex-col gap-4 w-[480px] items-center bg-gray-950 border rounded-xl mt-10 py-4 px-3'>
+                <div className='flex flex-col gap-4 w-[480px] items-center mt-10 py-4 px-3 glass-effect rounded-xl'>
 
                     <form onSubmit={handleSubmit(loginHandler)} className='w-full p-4 rounded-2xl'>
                         <h2 className='text-center text-3xl font-semibold'>Sign In</h2>
                         <button
                             type="button"
                             variant="outline"
-                            className="w-full bg-transparent border cursor-pointer border-gray-600 px-4 py-2 rounded-lg mt-6 flex justify-center items-center gap-2.5 hover:bg-gray-800"
+                            className="w-full bg-transparent border cursor-pointer border-border px-4 py-2 rounded-lg mt-6 flex justify-center items-center gap-2.5 hover:bg-secondary"
                         >
                             <Chrome className="w-4 h-4 mr-2" />
                             Continue with Google
@@ -63,7 +67,7 @@ const Login = () => {
                                 <span className="w-full border-t border-gray-300 dark:border-gray-600" />
                             </div>
                             <div className="relative flex justify-center text-xs uppercase">
-                                <span className="dark:bg-gray-950 px-4 text-gray-400 text-sm">
+                                <span className="dark:bg-primary-foreground px-4 text-muted-foreground text-sm bg-background">
                                     OR CONTINUE WITH
                                 </span>
                             </div>
@@ -72,7 +76,7 @@ const Login = () => {
                         <div className='mt-8'>
                             <div className='flex flex-col'>
                                 <label htmlFor="email">Email</label>
-                                <div className='flex items-center gap-2 border py-2 px-4 rounded-lg mt-2'>
+                                <div className='flex items-center gap-2 border border-input py-2 px-4 rounded-lg mt-2'>
                                     <Mail size={20} className='text-gray-400' />
                                     <input
                                         type="email" id='email' placeholder='Enter your email'
@@ -88,7 +92,7 @@ const Login = () => {
 
                             <div className='flex flex-col mt-4'>
                                 <label htmlFor="password">Password</label>
-                                <div className='flex items-center gap-2 border py-2 px-4 rounded-lg mt-2'>
+                                <div className='flex items-center gap-2 border border-input py-2 px-4 rounded-lg mt-2'>
                                     <Lock size={20} className='text-gray-400' />
                                     <input
                                         type="password"
@@ -106,8 +110,15 @@ const Login = () => {
                             }
 
                             <div className='mt-8'>
-                                <Button width="w-full">
-                                    Sign In
+                                <Button 
+                                    width="w-full"
+                                    disabled={loading}
+                                    className={`${loading ? 'opacity-40' : ''}`}
+                                >
+                                    {loading ? (
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        ) : null}
+                                    {loading ? "Signing..." : "Sign In"}
                                 </Button>
                             </div>
 
