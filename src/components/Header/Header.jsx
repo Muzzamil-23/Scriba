@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router'
 import Container from '../Container'
 import { useSelector } from 'react-redux'
 import Logo from '../Logo'
+import Button from '../Button'
+import { LogOut } from 'lucide-react'
 
 
 const Header = () => {
-    const authStatus = useSelector(state => state.auth.status)
+    const authStatus = useSelector(state => state.auth.isAuthenticated)
     const navigate = useNavigate()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -14,45 +16,35 @@ const Header = () => {
         {
             name: 'Home',
             slug: "/",
-            active: true,
-        },
-        {
-            name: "Explore",
-            slug: "/explore",
-            active: true,
+            active: authStatus,
         },
         {
             name: "Categories",
             slug: "/category",
-            active: true,
+            active: authStatus,
         },
-        {
-            name: "Sign In",
-            slug: "/login",
-            active: !authStatus,
-        },
-        {
-            name: "Sign Out",
-            slug: "/logout",
-            active: true,
-        },
+        // {
+        //     name: "Sign Out",
+        //     slug: "/logout",
+        //     active: authStatus,
+        // },
+
     ]
 
     return (
-        <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800">
+        <header className="sticky glass-effect top-0 z-50  border-b  dark:border-gray-800">
             <Container>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         {/* Logo */}
-                        <Logo/>
+                        <Logo />
                         {/* Desktop Navigation */}
                         <nav className="hidden md:flex items-center space-x-8">
 
 
                             {navItems.map((item) => item.active ? (
                                 <button key={item.name}
-
-                                    className="text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 font-medium transition-colors">
+                                    className="text-primary hover:text-blue-600 dark:hover:text-blue-400  cursor-pointer font-medium transition-colors text-lg">
                                     {item.name}
                                 </button>
 
@@ -61,7 +53,7 @@ const Header = () => {
                             {
                                 authStatus && (
                                     <div>
-                                        
+                                        <Button className='px-4 py-2.5 gap-3'><LogOut size={18}/> Sign Out</Button>
                                     </div>
                                 )
                             }

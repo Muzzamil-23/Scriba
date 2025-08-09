@@ -11,6 +11,7 @@ import { useEffect } from "react"
 import { supabase } from "./supabase/config"
 import { useDispatch } from "react-redux"
 import { clearUser, setUser } from "./store/authSlice"
+import Footer from "./components/Footer/Footer"
 
 
 function App() {
@@ -22,27 +23,40 @@ function App() {
 
   useEffect(() => {
     const fetchSession = async () => {
-      const {data} = supabase.auth.getSession()
+      const { data } = await supabase.auth.getSession()
       const user = data?.session?.user
-      if(user) dispatch(setUser(user))
+      if (user) dispatch(setUser(user))
       else dispatch(clearUser())
     }
     fetchSession()
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      const user = session?.user
+      if (user) dispatch(setUser(user))
+      else dispatch(clearUser())
+    })
+
+    return () => listener.subscription.unsubscribe()
   }, [])
 
   return (
     <>
-    
-    {/* <Header/> */}
-    {/* <Home/> */}
-    {/* <LogoutBtn/> */}
-    
+
+      {/* <Header/> */}
+      {/* <Home/> */}
+      {/* <LogoutBtn/> */}
+
       {/* <SearchBar/> */}
 
       {/* <button onClick={handleSignUp}>Click to SignUp</button> */}
+      <main>
+        <Header />
+        <Outlet />
+        <Footer/>
+      </main>
 
-      <Outlet/>
-    
+
+
     </>
   )
 }

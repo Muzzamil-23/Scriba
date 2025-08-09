@@ -10,6 +10,7 @@ import Signup from './components/Signup'
 import Login from './components/Login'
 import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
+import CompleteProfile from './components/CompleteProfile'
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
       {
         path: '/test',
         element: <Test/>
+      },
+      {
+        path: '/complete-profile',
+        element: <CompleteProfile/>
       }
     ]
   }

@@ -12,6 +12,7 @@ export const postApi = baseApi.injectEndpoints({
                 if (error) return { error }
                 return { data: posts }
             }
+            
         }),
 
         getPostBySlug: builder.query({
