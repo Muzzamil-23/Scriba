@@ -1,14 +1,53 @@
-
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Container from './Container'
 import Button from './Button'
 import { UploadIcon, X } from 'lucide-react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { profileSchema } from '@/validations/profileSchema'
 
 const CompleteProfile = () => {
   const interests = ['#Technology', '#Design', '#Science', '#Writing', '#Business', '#Programming', '#AI', '#ML', '#Startups']
   const [active, setActive] = useState([])
   const [avatar, setAvatar] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors }
+  } = useForm({
+    resolver: zodResolver(profileSchema)
+  })
+
+  useEffect(() => {
+    register("interest")
+  }, [register])
+
+  useEffect(() => {
+    setValue("interest", active)
+  }, [setValue, active])
+
+  const profileCompletionHandler = async (data) => {
+    setLoading(true)
+    try {
+      const session = await authService.login(data)
+      if (session) {
+        const userData = await authService.getCurrentUser()
+        if (userData) dispatch(setUser({ userData }))
+        navigate("/test")
+      }
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleInterestBtn = (interest) => {
+
     setActive((prev) => (
       prev.includes(interest) ? prev.filter(item => item !== interest) : [...prev, interest]
     ))
@@ -26,14 +65,14 @@ const CompleteProfile = () => {
   }
   return (
 
-    <Container>
+    <Container className='mb-16'>
       <div className='flex flex-col mt-20'>
         <div>
           <h2 className='text-3xl font-extrabold'>Complete your profile</h2>
           <p className='mt-2 text-muted-foreground text-lg'>Set up how you appear across the website</p>
         </div>
         <div className='glass-effect rounded-xl px-8 py-6 mt-8'>
-          <form onSubmit={(e) => e.preventDefault()}>
+          <form onSubmit={handleSubmit(profileCompletionHandler)}>
             <div className='flex flex-col gap-1'>
               <h4 className='text-lg font-semibold'>Profile details</h4>
               <p className='text-muted-foreground'>Basic info, settings, and interests</p>
@@ -61,31 +100,41 @@ const CompleteProfile = () => {
                       Upload <UploadIcon size={18} />
                     </label>
                     {
-                      avatar && <button className='bg-secondary px-4 py-2 rounded-lg hover:bg-secondary/70 hover:cursor-pointer flex items-center gap-2' onClick={handleAvatarRemove}>Remove <X size={18}/></button>
+                      avatar && <button className='bg-secondary px-4 py-2 rounded-lg hover:bg-secondary/70 hover:cursor-pointer flex items-center gap-2' onClick={handleAvatarRemove}>Remove <X size={18} /></button>
                     }
                   </div>
-                  <input type='file' accept='image/png,image/jpeg' id='avatarUpload' className='hidden' onChange={handleAvatarChange} name="Upload" />
+                  <input type='file' accept='image/png,image/jpeg' id='avatarUpload' className='hidden' required onChange={handleAvatarChange} name="Upload" />
                   <span className='text-sm text-muted-foreground pl-2'>PNG or JPEG only</span>
                 </div>
-
               </div>
-
               <div className='flex flex-col gap-4 border-t mt-8'>
                 <div className='mt-8 flex flex-col gap-3'>
                   <label htmlFor="username" className='text-lg font-semibold'>Display Name</label>
-                  <input type="text" id='username' className='border border-border px-4 py-2 rounded-lg' placeholder='e.g. John Doe' />
+                  <input type="text" id='username' className='border border-border px-4 py-2 rounded-lg' placeholder='e.g. John Doe' {...register("displayName")} />
+                  {
+                    errors.displayName && <p className='text-red-500'>{errors.displayName.message}</p>
+                  }
                 </div>
                 <div className='mt-4 flex flex-col gap-3'>
                   <label htmlFor="username" className='text-lg font-semibold'>Designation</label>
-                  <input type="text" id='username' className='border border-border px-4 py-2 rounded-lg' placeholder='e.g. Senior Software Engineer at ABC Company' />
+                  <input type="text" id='username' className='border border-border px-4 py-2 rounded-lg' placeholder='e.g. Senior Software Engineer at ABC Company' {...register("designation")} />
+                  {
+                    errors.designation && <p className='text-red-500'>{errors.designation.message}</p>
+                  }
                 </div>
                 <div className='mt-4 flex flex-col gap-3'>
                   <label htmlFor="bio" className='text-lg font-semibold'>Short bio</label>
-                  <textarea placeholder='Tell readers about yourself in a sentence or two..' id="bio" className='border border-border px-4 py-2 rounded-lg'></textarea>
+                  <textarea placeholder='Tell readers about yourself in a sentence or two..' id="bio" className='border border-border px-4 py-2 rounded-lg' {...register("bio")}></textarea>
+                  {
+                    errors.bio && <p className='text-red-500'>{errors.bio.message}</p>
+                  }
                 </div>
                 <div className='flex flex-col mt-4 gap-3'>
                   <label htmlFor="location" className='text-lg font-semibold'>Location</label>
-                  <input type="text" id='location' placeholder='City, Country' className='border border-border rounded-lg px-4 py-2' />
+                  <input type="text" id='location' placeholder='City, Country' className='border border-border rounded-lg px-4 py-2' {...register("location")} />
+                  {
+                    errors.location && <p className='text-red-500'>{errors.location.message}</p>
+                  }
                 </div>
                 <div className='mt-4'>
                   <label className='text-lg font-semibold'>Interests</label>
@@ -97,6 +146,9 @@ const CompleteProfile = () => {
                           {interest}
                         </button>
                       ))
+                    }
+                    {
+                      errors.interest && <p className='text-red-500'>{errors.interest.message}</p>
                     }
                   </div>
                 </div>

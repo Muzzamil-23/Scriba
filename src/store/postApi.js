@@ -95,10 +95,25 @@ export const postApi = baseApi.injectEndpoints({
                 const { error } = await supabase
                     .from('articles')
                     .insert([
-                        { title: title, subtitle: subtitle, slug: slug, featured: featured, read_time: readTime, views: views, likes: likes, cover_image: coverImage, status: status },
+                        { title: title, subtitle: subtitle, slug: slug, featured: featured, read_time: readTime, cover_image: coverImage, status: status },
                     ])
                     .select()
                 if (error) return { error }
+            }
+        }),
+
+        updatePostView: builder.mutation({
+            async queryfn(
+                {views}
+            ) {
+                const {error} = await supabase
+                .from('articles')
+                .insert([
+                    {
+                        views: views
+                    }
+                ])
+                if(error) return {error}
             }
         })
     }),

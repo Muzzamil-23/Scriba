@@ -34,9 +34,6 @@ const Home = () => {
                         <TrendingSidebar/>  
                     </aside>
                 </div>
-
-
-
             </Container>
         </section>
     )

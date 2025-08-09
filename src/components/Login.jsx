@@ -113,7 +113,7 @@ const Login = () => {
                                 <Button 
                                     width="w-full"
                                     disabled={loading}
-                                    className={`${loading ? 'opacity-40' : ''}`}
+                                    className={`${loading ? 'opacity-40' : ''} px-6 py-2`}
                                 >
                                     {loading ? (
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

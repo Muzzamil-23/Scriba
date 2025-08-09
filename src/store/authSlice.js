@@ -5,6 +5,7 @@ const initialState = {
     isAuthenticated: false,
     user: null,
     loading: true,
+    isProfileCompleted: false,
 }
 
 const authSlice = createSlice({
@@ -20,9 +21,12 @@ const authSlice = createSlice({
             state.isAuthenticated = false
             state.user = null
             state.loading = false
+        },
+        updateIsProfileCompleted: (state) => {
+            state.isProfileCompleted = true
         }
     }
 })
 
-export const {setUser, clearUser} = authSlice.actions
+export const {setUser, clearUser, updateIsProfileCompleted} = authSlice.actions
 export default authSlice.reducer
