@@ -6,6 +6,7 @@ const initialState = {
     user: null,
     loading: true,
     isProfileCompleted: false,
+    userId: null
 }
 
 const authSlice = createSlice({
@@ -24,9 +25,12 @@ const authSlice = createSlice({
         },
         updateIsProfileCompleted: (state) => {
             state.isProfileCompleted = true
+        },
+        setUserId: (state, action) => {
+            state.userId = action.payload
         }
     }
 })
 
-export const {setUser, clearUser, updateIsProfileCompleted} = authSlice.actions
+export const {setUser, clearUser, updateIsProfileCompleted, setUserId} = authSlice.actions
 export default authSlice.reducer

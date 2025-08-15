@@ -4,7 +4,7 @@ import Header from "./components/Header/Header"
 import { useEffect, useState } from "react"
 import { supabase } from "./supabase/config"
 import { useDispatch, useSelector } from "react-redux"
-import { clearUser, setUser, updateIsProfileCompleted } from "./store/authSlice"
+import { clearUser, setUser, setUserId, updateIsProfileCompleted } from "./store/authSlice"
 import Footer from "./components/Footer/Footer"
 import { Loader2 } from "lucide-react"
 
@@ -20,17 +20,24 @@ function App() {
     const fetchSession = async () => {
       const { data } = await supabase.auth.getSession()
       const user = data?.session?.user
-      // console.log(user);
+      
 
       if (user) {
         dispatch(setUser(user))
+        dispatch(setUserId(user.id))
+        // console.log(isAuthenticated);
+        // console.log(user);
+        
+        
         const { data: profile, error, loading} = await supabase
           .from('profiles')
           .select('is_profile_completed')
           .eq('id', user.id)
-        if(loading) setLoading(true)   
-        if (profile && !profile.is_profile_completed) {
-          navigate('/complete-profile');
+        if(loading) setLoading(true)
+          if (profile && profile.length > 0 && !profile[0].is_profile_completed) {
+            navigate('/complete-profile')
+        } else {
+          dispatch(updateIsProfileCompleted())
         }
       }
       else dispatch(clearUser())
@@ -41,6 +48,7 @@ function App() {
     const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       const user = session?.user
       if (user) {
+        dispatch(setUserId(user.id))
         dispatch(setUser(user))
         // const { data: profile, error } = await supabase
         //   .from('profiles')
@@ -64,14 +72,6 @@ function App() {
     </div>
   ) : (
     <>
-
-      {/* <Header/> */}
-      {/* <Home/> */}
-      {/* <LogoutBtn/> */}
-
-      {/* <SearchBar/> */}
-
-      {/* <button onClick={handleSignUp}>Click to SignUp</button> */}
       <main>
         {
           (isAuthenticated && isProfileCompleted) && <Header />
