@@ -9,6 +9,7 @@ import storageService from '@/supabase/storage'
 import { useSelector } from 'react-redux'
 import userService from '@/supabase/userService'
 import { useNavigate } from 'react-router'
+import { supabase } from '@/supabase/config'
 
 
 const CompleteProfile = () => {
@@ -19,7 +20,7 @@ const CompleteProfile = () => {
   const [error, setError] = useState("")
   const userId = useSelector(state => state.auth.userId)
   const navigate = useNavigate()
-  
+
 
   const {
     register,
@@ -45,23 +46,33 @@ const CompleteProfile = () => {
   useEffect(() => {
     if (avatarFiles && avatarFiles.length > 0) {
       const file = avatarFiles[0]
+      // console.log("file", file);
+
       const imageUrl = URL.createObjectURL(file)
+      // console.log("imageUrl", imageUrl);
+
       setAvatar(imageUrl)
-      
       // Cleanup URL on unmount or when avatar changes
       return () => URL.revokeObjectURL(imageUrl)
     }
   }, [avatarFiles])
 
+
+
   const profileCompletionHandler = async (data) => {
     setLoading(true)
     try {
-      console.log(data);
-      if(avatar && userId) {
-        const uploadAvatar = await storageService.uploadAvatar(userId, avatar, data.avatar[0].name)
-        if(uploadAvatar) {
+      if (data.avatar?.[0] && userId) {
+        // console.log("data.avatar[0]",data.avatar[0]);
+        // console.log("data.avatar[0].name", data.avatar[0].name);
+        const uploadAvatar = await storageService.uploadAvatar(userId, data.avatar[0])
+        console.log("neche");
+
+        console.log("Error at uploadAvatar", uploadAvatar);
+
+        if (uploadAvatar) {
           const response = await userService.completeProfile(data, userId, uploadAvatar)
-          if(response) navigate("/")
+          if (response) navigate("/")
         }
       }
     }
@@ -72,10 +83,10 @@ const CompleteProfile = () => {
     }
   }
 
-  
-  
 
-  
+
+
+
 
   // const handleInterestBtn = (interest, e) => {
   //   e.preventDefault()
@@ -83,11 +94,16 @@ const CompleteProfile = () => {
   //     prev.includes(interest) ? prev.filter(item => item !== interest) : [...prev, interest]
   //   ))
   // }
+  // console.log("Avatar file", data.avatar?.[0]);
+
+
+
+
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0]
     if (file) {
-      const imageUrl = URL.createObjectURL(file)     
+      const imageUrl = URL.createObjectURL(file)
       setAvatar(imageUrl)
     }
   }
@@ -127,7 +143,7 @@ const CompleteProfile = () => {
                       className="w-16 h-16 md:w-full md:h-full object-cover"
                     />
                   )}
-                  
+
                 </div>
                 <div className='flex flex-col gap-2'>
                   <div className='flex flex-wrap justify-center md:justify-start gap-4'>
@@ -141,7 +157,7 @@ const CompleteProfile = () => {
                       avatar && <button className='bg-secondary text-sm md:text-base px-4 py-2 rounded-lg hover:bg-secondary/70 hover:cursor-pointer flex items-center gap-2' onClick={handleAvatarRemove}>Remove <X size={18} /></button>
                     }
                   </div>
-                  <input type='file' accept='image/png,image/jpeg,image/webp,image/jpg' id='avatarUpload' className='hidden' onChange={handleAvatarChange} {...register("avatar")}  />
+                  <input type='file' accept='image/png,image/jpeg,image/webp,image/jpg' id='avatarUpload' className='hidden' onChange={handleAvatarChange} {...register("avatar")} />
                   <span className='text-center md:text-left text-sm text-muted-foreground pl-2'>PNG, JPG, JPEG and WEBP only</span>
                   {
                     errors.avatar && <p className='text-red-500'>{errors.avatar.message}</p>

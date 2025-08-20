@@ -10,53 +10,65 @@ import Login from './components/Login'
 import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
 import CompleteProfile from './components/CompleteProfile'
+import AuthProvider from './components/AuthProvider'
+import Test from './components/Test'
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App/>,
+    element: <App />,
     children: [
       {
         path: '/',
         element: (
-          <ProtectedRoute authentication>
-            <Home/>
+          <ProtectedRoute requireAuth={true} requireCompleteProfile={true}>
+            <Home />
           </ProtectedRoute>
         )
       },
       {
         path: '/signup',
         element: (
-          <ProtectedRoute authentication={false}>
-            <Signup/>
+          <ProtectedRoute requireAuth={false}>
+            <Signup />
           </ProtectedRoute>
         )
       },
       {
         path: '/login',
         element: (
-          <ProtectedRoute authentication={false}>
-            <Login/>
+          <ProtectedRoute requireAuth={false}>
+            <Login />
           </ProtectedRoute>
         )
       },
       {
         path: '/complete-profile',
         element: (
-          <ProtectedRoute authentication>
-            <CompleteProfile/>
+          <ProtectedRoute requireAuth={true} requireCompleteProfile={false}>
+            <CompleteProfile />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: '/test',
+        element: (
+          <ProtectedRoute requireAuth={true} requireCompleteProfile={true}>
+            <Test />
           </ProtectedRoute>
         )
       }
     ]
   }
-
 ])
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
-      <RouterProvider router={router}/>
+      {/* <AuthProvider>
+      </AuthProvider> */}
+      <RouterProvider router={router} />
+
     </Provider>
   </StrictMode>,
 )

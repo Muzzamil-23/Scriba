@@ -15,22 +15,27 @@ const authSlice = createSlice({
     reducers: {
         setUser: (state, action) => {
             state.isAuthenticated = true
-            state.user = action.payload.userData
+            state.user = action.payload
             state.loading = false
         },
         clearUser: (state) => {
             state.isAuthenticated = false
             state.user = null
             state.loading = false
+            state.isProfileCompleted = false
+            state.userId = null
         },
-        updateIsProfileCompleted: (state) => {
-            state.isProfileCompleted = true
+        updateIsProfileCompleted: (state, action) => {
+            state.isProfileCompleted = action.payload
         },
         setUserId: (state, action) => {
             state.userId = action.payload
+        },
+        setLoading: (state,action) => {
+            state.loading = action.payload
         }
     }
 })
 
-export const {setUser, clearUser, updateIsProfileCompleted, setUserId} = authSlice.actions
+export const {setUser, clearUser, updateIsProfileCompleted, setUserId, setLoading} = authSlice.actions
 export default authSlice.reducer

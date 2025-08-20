@@ -7,23 +7,43 @@ export class StorageService {
         this.client = supabase
     }
 
-    async uploadAvatar(userId, file, name) {
+    async uploadAvatar(userId, file) {
         try {
-            const extension = name.split('.').pop()
+            const extension = file.name.split('.').pop()
             const fileName = `${userId}/avatar.${extension}`
-            const { data, error } = await this.client.storage.from("avatars").upload(fileName, file, { cacheControl: '3600', upsert: false })
+            
+            
+            // const {data: user} = this.client.auth.getUser()
+            // console.log("Current user before upload:", user?.id)
+            const { data, error } = await this.client.storage.from("avatars").upload(fileName, file)
+            console.log("Upload result:", { data, error });
             if (error) throw error
-            const { data: publicData } = this.client
-                .storage
-                .from("avatars")
-                .getPublicUrl(fileName);
-            return publicData.publicUrl;
-
+            return fileName
         } catch (error) {
             console.log("StorageService :: uploadAvatar :: error", error);
             throw error
         }
     }
+
+    // async uploadAvatar(userId, file) {
+    //     try {
+    //         const extension = file.name.split(".").pop();
+    //         const fileName = `${userId}/avatar.${extension}`;
+    //         console.log(fileName);
+            
+    //         const { data, error } = await this.client.storage
+    //             .from("avatars")
+    //             .upload(fileName, file)
+    //         if (error) {
+    //             console.error("Upload failed:", error);
+    //             throw error
+    //         }
+    //         return data
+    //     } catch (error) {
+    //         console.error("StorageService :: uploadAvatar :: error", error);
+    //         throw error;
+    //     }
+    // }
 
     // getAvatar(userId) {
     //     const fileName = `${userId}/avatar.${'png' || 'jpeg' || 'jpg' || 'webp'}`
